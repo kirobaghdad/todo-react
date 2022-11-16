@@ -1,0 +1,71 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.todo {
+  border-style: solid;
+  border: 0 0.2px;
+  border-color: grey;
+  width: 250px;
+  height: 30px;
+  align-content: center;
+  margin: 10px;
+  border-radius: 7px;
+  line-height: 30px;
+}
+
+.input {
+  background: url(./book.png) left / 25px 25px no-repeat;
+  height: 30px;
+  padding-left: 30px;
+  border-radius: 7px;
+}
+
+.button {
+  font-weight: bold;
+  border-radius: 7px;
+  font-weight: bold;
+  color: white;
+  border: none;
+}
+
+.button:hover {
+  cursor: pointer;
+}
+
+#new-task {
+  width: 300px;
+  height: 30px;
+  background-color: deepskyblue;
+}
+
+#state-button {
+  width: 80px;
+  height: 30px;
+}
+
+#delete-button {
+  margin: 10px;
+  height: 30px;
+  background-color: crimson;
+}
+
+.todo-list {
+  display: table;
+  margin: 0 auto;
+  list-style-type: none;
+}
+
+.edit-todo:hover {
+  cursor: pointer;
+}
