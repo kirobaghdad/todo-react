@@ -2,8 +2,7 @@ import "./index.css";
 import pencilImg from "./pencil.png";
 import deleteImg from "./delete.png";
 
-const ToDo = ({ id, task, state, changeState, deleteTask, edidTask }) => {
-  console.log(state);
+const ToDo = ({ id, todo, state, changeState, deleteTodo, edidTodo }) => {
   return (
     <div className="todo">
       <span
@@ -14,7 +13,7 @@ const ToDo = ({ id, task, state, changeState, deleteTask, edidTask }) => {
           textDecorationLine: state ? "line-through" : "none",
         }}
       >
-        {task}
+        {todo}
       </span>
       <div
         style={{
@@ -25,7 +24,7 @@ const ToDo = ({ id, task, state, changeState, deleteTask, edidTask }) => {
       >
         <input
           type={"checkbox"}
-          checked={state}
+          checked={state || false}
           onChange={() => {
             changeState(id);
           }}
@@ -36,19 +35,23 @@ const ToDo = ({ id, task, state, changeState, deleteTask, edidTask }) => {
             cursor: "pointer",
           }}
         />
-        <img
-          src={pencilImg}
-          alt="pencil"
-          onClick={() => {
-            edidTask(id);
-          }}
-          style={{ marginRight: "7px", width: "20px", cursor: "pointer" }}
-        />
+        {state === 0 ? (
+          <img
+            src={pencilImg}
+            alt="pencil"
+            onClick={() => {
+              edidTodo(id);
+            }}
+            style={{ marginRight: "7px", width: "20px", cursor: "pointer" }}
+          />
+        ) : (
+          []
+        )}
         <img
           src={deleteImg}
           alt="delete"
           onClick={() => {
-            deleteTask(id);
+            deleteTodo(id);
           }}
           style={{ width: "20px" }}
         />

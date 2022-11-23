@@ -2,6 +2,7 @@ import "./App.css";
 import "./ToDoList.js";
 import ToDoList from "./ToDoList.js";
 import { useState, useEffect } from "react";
+import Axios from "axios";
 
 function App() {
   document.addEventListener("keydown", (e) => {
@@ -12,29 +13,44 @@ function App() {
   });
 
   const [ToDoData, setToDoData] = useState([[]]);
-  const [newTask, setNewTask] = useState("");
+  const [newTodo, setNewTodo] = useState("");
   const [filter, setFilter] = useState("All");
   const [count, setCount] = useState(0);
 
-  const addTask = () => {
-    if (newTask.length) {
-      setToDoData([...ToDoData, { text: newTask, state: false }]);
-      setNewTask("");
+  const getTodos = () => {
+    Axios.get("http://localhost:3001/getTodos").then((res) => {
+      setToDoData(res.data);
+      if (res.data.length) setCount(res.data[res.data.length - 1]["id"] + 1);
+      else setCount(0);
+    });
+  };
+
+  const addTodo = () => {
+    if (newTodo.length) {
+      setToDoData([...ToDoData, { id: count, todo: newTodo, state: 0 }]);
+      setNewTodo("");
+      Axios.post("http://localhost:3001/addTodo", {
+        id: count,
+        todo: newTodo,
+        state: 0,
+      }).then((res) => {});
       setCount(count + 1);
     }
   };
 
+  const deleteTodo = (id) => {
+    setToDoData(ToDoData.filter((e) => e.id !== id));
+    Axios.post("http://localhost:3001/deleteTodo", {
+      id: id,
+    }).then((res) => {});
+  };
+
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") addTask();
+    if (e.key === "Enter") addTodo();
   };
 
   useEffect(() => {
-    setToDoData([
-      // { text: "test1", state: true },
-      // { text: "test2", state: false },
-      // { text: "test3", state: false },
-      // { text: "test4", state: true },
-    ]);
+    getTodos();
   }, []);
 
   return (
@@ -47,23 +63,23 @@ function App() {
           type={"text"}
           name="todo"
           className="input"
-          value={newTask}
+          value={newTodo}
           onKeyDown={handleKeyDown}
           tabIndex={0}
           onChange={(e) => {
             e.stopPropagation();
-            setNewTask(e.target.value);
+            setNewTodo(e.target.value);
           }}
         />
         <br></br>
         <br></br>
         <button
-          value="Add new Task"
+          value="Add new Todo"
           className="button"
           id="new-task"
-          onClick={addTask}
+          onClick={addTodo}
         >
-          Add New Task
+          Add New Todo
         </button>
       </div>
       <h2 style={{ marginBottom: "10px", marginTop: "50px" }}>ToDo List</h2>
@@ -108,26 +124,59 @@ function App() {
           ToDo
         </button>
       </div>
-      <ToDoList
-        ToDoData={ToDoData}
-        setToDoData={setToDoData}
-        filter={filter}
-        count={count}
-        setCount={setCount}
-        setNewTask={setNewTask}
-      />
+      {count ? (
+        <ToDoList
+          ToDoData={ToDoData}
+          setToDoData={setToDoData}
+          filter={filter}
+          setNewTodo={setNewTodo}
+          deleteTodo={deleteTodo}
+        />
+      ) : (
+        []
+      )}
 
       <div>
         <button
           onClick={() => {
-            let newCount = count;
-            setToDoData(
-              ToDoData.flatMap((element) => {
-                if (element.state === true) newCount--;
-                return element.state !== true ? element : [];
+            //let newCount = count;
+            console.log("Hello1");
+            Axios.post("http://localhost:3001/deleteDone").then((res) => {
+              console.log(res);
+            });
+            // ToDoData.forEach((e, i) => {
+            //   if (e.state === true) {
+            //     newCount--;
+            //     Axios.post("http://localhost:3001/deleteTodo", {
+            //       id: i,
+            //     }).then((res) => {});
+            //   }
+            // });
+            console.log(ToDoData);
+
+            console.log(
+              ToDoData.flatMap((e) => {
+                if (e.state === 1) {
+                  //newCount--;
+                  return [];
+                } else return e;
               })
             );
-            setCount(newCount);
+            setToDoData(
+              ToDoData.flatMap((e) => {
+                if (e.state === 1) {
+                  //newCount--;
+                  return [];
+                } else return e;
+              })
+            );
+            // ToDoData.forEach((todo, i) => {
+            //   if (todo.state === 1) {
+            //     deleteTodo(i);
+            //     newCount--;
+            //   }
+            // });
+            //setCount(newCount);
           }}
           className="button"
           id="delete-button"
@@ -138,11 +187,13 @@ function App() {
         <button
           onClick={() => {
             setToDoData([]);
+            setCount(0);
+            Axios.post("http://localhost:3001/truncateTodoTable");
           }}
           className="button"
           id="delete-button"
         >
-          Delete All Tasks
+          Delete All Todos
         </button>
       </div>
     </div>
